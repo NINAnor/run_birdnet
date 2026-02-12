@@ -12,6 +12,9 @@ uv install
 
 Also install `GNU Parallel` for running `run_birdnet_parellel.sh`
 
+> [!WARNING]
+> If running on a NINA CPU server, remember to use `kinit`
+
 # Usage
 
 1. Clone this repository
@@ -22,4 +25,9 @@ Also install `GNU Parallel` for running `run_birdnet_parellel.sh`
 
 # TODO:
 
-Run BirdNET if the files are located on a remote server.
+Run BirdNET if the files are located on a remote server. Test the `run_birdnet_rclone.sh`
+
+# Contact me
+
+Benjamin Cretois
+benjamin.cretois@nina.no
