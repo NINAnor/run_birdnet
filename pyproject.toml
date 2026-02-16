@@ -1,38 +1,12 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "birdnet_analyzer"
-version = "2.4.0"
+name = "birdnet_analyzer_custom"
+version = "0.0.1"
 license = { text = "MIT" }
-description = "BirdNET analyzer for scientific audio data processing and bird classification."
-authors = [{ name = "Stefan Kahl" }]
-maintainers = [{ name = "Josef Haupt" }, { name = "Max Mauermann" }]
+description = "BirdNET analyzer wrapper"
+authors = [{ name = "Benjamin Cretois" }]
 keywords = ["birdnet", "birdnet-analyzer"]
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dependencies = [
-    "librosa>=0.11",
-    "resampy",
-    "tensorflow>=2.20",
-    "pyarrow>=22.0.0;platform_system=='Darwin'", # https://github.com/apache/arrow/issues/40088
-    "tqdm",
-    "pandas",
-    "matplotlib",
-    "kagglehub",
+    "birdnet-analyzer>=2.4.0",
 ]
-
-[project.optional-dependencies]
-
-
-[project.scripts]
-birdnet-analyze = "birdnet_analyzer.analyze.cli:main"
-birdnet-embeddings = "birdnet_analyzer.embeddings.cli:main"
-birdnet-evaluate = "birdnet_analyzer.evaluation.__init__:main"
-birdnet-search = "birdnet_analyzer.search.cli:main"
-birdnet-train = "birdnet_analyzer.train.cli:main"
-birdnet-segments = "birdnet_analyzer.segments.cli:main"
-birdnet-species = "birdnet_analyzer.species.cli:main"
-
-
