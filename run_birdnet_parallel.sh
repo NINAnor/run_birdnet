@@ -32,16 +32,22 @@ find_files() {
     local DATA_DIR="$1"
     local START_TIME="$2"
     local END_TIME="$3"
-    for INPUT in "$DATA_DIR"/*/*/*.wav; do
+    for INPUT in "$DATA_DIR"/*/*/*.{wav,mp3,flac}; do
+        [ -e "$INPUT" ] || continue  # skip if glob didn't match
         FILENAME=$(basename "$INPUT")
-        
-        if [[ $FILENAME =~ _([0-9]{8})_([0-9]{6})\.wav$ ]]; then
+        TIME=""
+
+        # Pattern 1: SITE_YYYYMMDD_HHMMSS.{ext}
+        if [[ $FILENAME =~ _([0-9]{8})_([0-9]{6})\.(wav|mp3|flac)$ ]]; then
             TIME="${BASH_REMATCH[2]}"
-            
-            # Check if time is within range
-            if [ "$TIME" -ge "$START_TIME" ] && [ "$TIME" -le "$END_TIME" ]; then
-                echo "$INPUT"
-            fi
+        # Pattern 2: YYYY-MM-DDTHH_MM_SS.mmmZ.{ext}  (ISO 8601)
+        elif [[ $FILENAME =~ ([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2})_([0-9]{2})_([0-9]{2})\.[0-9]+Z\.(wav|mp3|flac)$ ]]; then
+            TIME="${BASH_REMATCH[4]}${BASH_REMATCH[5]}${BASH_REMATCH[6]}"
+        fi
+
+        # Check if time is within range
+        if [ -n "$TIME" ] && [ "$TIME" -ge "$START_TIME" ] && [ "$TIME" -le "$END_TIME" ]; then
+            echo "$INPUT"
         fi
     done
 }

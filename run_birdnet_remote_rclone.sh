@@ -1,9 +1,5 @@
 #!/bin/bash
 
-###############################
-# THIS NEEDS TO BE TESTED !!! #
-###############################
-
 set -euo pipefail
 source .env
 
@@ -32,8 +28,8 @@ process_file_remote() {
     
     echo "Processing: $FILENAME"
     
-    # Download file using rclone (streams efficiently)
-    if rclone copy "$RCLONE_REMOTE:$REMOTE_FILE" /tmp/ --no-traverse --quiet; then
+    # Download file using rclone (copyto saves to a specific filename)
+    if rclone copyto "$RCLONE_REMOTE:$REMOTE_FILE" "$TEMP_FILE" --no-traverse --quiet; then
         # Process the file
         uv run birdnet-analyze "$TEMP_FILE" --slist "$SPECIES_LIST" -o "$OUTPUT"
         
@@ -53,20 +49,24 @@ find_files_remote() {
     local START_TIME="$3"
     local END_TIME="$4"
     
-    # List all .wav files using rclone
+    # List all audio files (.wav, .mp3, .flac) using rclone
     rclone lsf "$RCLONE_REMOTE:$REMOTE_PATH" --recursive --files-only | \
-    grep -E '\.wav$' | \
+    grep -Ei '\.(wav|mp3|flac)$' | \
     while read -r file; do
         FILENAME=$(basename "$file")
-        
-        # Extract timestamp from filename pattern SITE_YYYYMMDD_HHMMSS.wav
-        if [[ $FILENAME =~ _([0-9]{8})_([0-9]{6})\.wav$ ]]; then
+        TIME=""
+
+        # Pattern 1: SITE_YYYYMMDD_HHMMSS.{ext}
+        if [[ $FILENAME =~ _([0-9]{8})_([0-9]{6})\.(wav|mp3|flac)$ ]]; then
             TIME="${BASH_REMATCH[2]}"
-            
-            # Check if time is within range
-            if [ "$TIME" -ge "$START_TIME" ] && [ "$TIME" -le "$END_TIME" ]; then
-                echo "$REMOTE_PATH/$file"
-            fi
+        # Pattern 2: YYYY-MM-DDTHH_MM_SS.mmmZ.{ext}  (ISO 8601)
+        elif [[ $FILENAME =~ ([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2})_([0-9]{2})_([0-9]{2})\.[0-9]+Z\.(wav|mp3|flac)$ ]]; then
+            TIME="${BASH_REMATCH[4]}${BASH_REMATCH[5]}${BASH_REMATCH[6]}"
+        fi
+
+        # Check if time is within range
+        if [ -n "$TIME" ] && [ "$TIME" -ge "$START_TIME" ] && [ "$TIME" -le "$END_TIME" ]; then
+            echo "$REMOTE_PATH/$file"
         fi
     done
 }

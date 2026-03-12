@@ -4,28 +4,40 @@ This repository contains the scripts to run BirdNET very easily for any project.
 
 # Requirements
 
-Install the dependancies
+**Python dependancies:**
 
 ```bash
 uv install
 ```
 
-Also install `GNU Parallel` for running `run_birdnet_parellel.sh`
+**system dependancies:**
+
+- `GNU Parallel`
+- `Rclone` (only if using `run_birdnet_remote_rclone.sh`)
 
 > [!WARNING]
 > If running on a NINA CPU server, remember to use `kinit`
 
 # Usage
 
-1. Clone this repository
-2. Change the `.env` with the project 
-3. start the `run_birdnet_parallel.sh` script
+1. Clone this repository.
+2. Change the `.env` with the project .
+3. start `run_birdnet_parallel.sh` if data local or `run_birdnet_remote_rclone.sh` if data on an S3 bucket.
 4. Get your results!
 
+# Workaround `kinit` stoppage
 
-# TODO:
+Because we need to renew the **Kerberos ticket-granting ticket**, there can be a stoppage when trying to analyze large dataset (e.g. the ticket is valid for 10 hours on `t2lipcpi02.nina.no`). We need to run `kinit` every once in a while by setting up a `cron` job.
 
-Run BirdNET if the files are located on a remote server. Test the `run_birdnet_rclone.sh`
+After running `kinit` and fill in your password you can find a **credential cache (krb*)**. This contains credentials used to run `kinit` without more manual authentification (up to a certain limit, that you can figure out with `klist`).
+
+To setup the cronjob, use `crontab -e` and add the following line:
+
+```bash
+* * * * * KRB5CCNAME=/tmp/krb5cc_210015162 kinit -R 
+```
+
+This should run `kinit` every minute without any manual intervention.
 
 # Contact me
 
