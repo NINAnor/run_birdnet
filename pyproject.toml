@@ -1,12 +1,12 @@
 [project]
-name = "birdnet_analyzer_custom"
-version = "0.0.1"
-license = { text = "MIT" }
+authors = [{name = "Benjamin Cretois"}]
+dependencies = [
+  "birdnet-analyzer>=2.4.0"
+]
 description = "BirdNET analyzer wrapper"
-authors = [{ name = "Benjamin Cretois" }]
 keywords = ["birdnet", "birdnet-analyzer"]
+license = {text = "MIT"}
+name = "birdnet_analyzer_custom"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
-dependencies = [
-    "birdnet-analyzer>=2.4.0",
-]
+version = "0.0.1"

@@ -25,6 +25,9 @@ uv install
 3. start `run_birdnet_parallel.sh` if data local or `run_birdnet_remote_rclone.sh` if data on an S3 bucket.
 4. Get your results!
 
+> [!TIP]
+> The scripts use the `--resume` function of `GNU Parallel`, meaning that a `.log` is created for all the files analyzed. If the process stops, the scripts will restart where the process has stopped.
+
 # Workaround `kinit` stoppage
 
 Because we need to renew the **Kerberos ticket-granting ticket**, there can be a stoppage when trying to analyze large dataset (e.g. the ticket is valid for 10 hours on `t2lipcpi02.nina.no`). We need to run `kinit` every once in a while by setting up a `cron` job.
@@ -34,7 +37,7 @@ After running `kinit` and fill in your password you can find a **credential cach
 To setup the cronjob, use `crontab -e` and add the following line:
 
 ```bash
-* * * * * KRB5CCNAME=/tmp/krb5cc_210015162 kinit -R 
+* * * * * KRB5CCNAME=/tmp/krb5cc_210015162 kinit -R
 ```
 
 This should run `kinit` every minute without any manual intervention.

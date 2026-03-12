@@ -21,9 +21,9 @@ process_file() {
     local OUTPUT="$2"
     local SPECIES_LIST="$3"
     local FILENAME=$(basename "$INPUT")
-    
+
     echo "Processing: $FILENAME"
-    uv run birdnet-analyze "$INPUT" --slist "$SPECIES_LIST" -o "$OUTPUT" 
+    uv run birdnet-analyze "$INPUT" --slist "$SPECIES_LIST" -o "$OUTPUT"
 }
 export -f process_file
 

@@ -22,17 +22,17 @@ process_file_remote() {
     local OUTPUT="$2"
     local SPECIES_LIST="$3"
     local RCLONE_REMOTE="$4"
-    
+
     local FILENAME=$(basename "$REMOTE_FILE")
     local TEMP_FILE="/tmp/birdnet_$$_$FILENAME"
-    
+
     echo "Processing: $FILENAME"
-    
+
     # Download file using rclone (copyto saves to a specific filename)
     if rclone copyto "$RCLONE_REMOTE:$REMOTE_FILE" "$TEMP_FILE" --no-traverse --quiet; then
         # Process the file
         uv run birdnet-analyze "$TEMP_FILE" --slist "$SPECIES_LIST" -o "$OUTPUT"
-        
+
         # Clean up
         rm -f "$TEMP_FILE"
     else
@@ -48,7 +48,7 @@ find_files_remote() {
     local REMOTE_PATH="$2"
     local START_TIME="$3"
     local END_TIME="$4"
-    
+
     # List all audio files (.wav, .mp3, .flac) using rclone
     rclone lsf "$RCLONE_REMOTE:$REMOTE_PATH" --recursive --files-only | \
     grep -Ei '\.(wav|mp3|flac)$' | \
